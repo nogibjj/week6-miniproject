@@ -27,10 +27,11 @@ The `city`, `country`, and `countrylanguage` tables had the following columns:
 
 The following query finds the country in each continent with the maximum Life Expectancy. It returns the Continent, Country Name, and Life Expectancy in descending order.
 ```sql
-SELECT
+SELECT 
     Country.Continent,
     Country.Name,
-    Country.LifeExpectancy
+    Country.LifeExpectancy,
+    City.Name AS CapitalCity
 FROM 
     Country
 JOIN 
@@ -46,18 +47,22 @@ JOIN
 ON 
     Country.Continent = MaxLifeExpectancyByContinent.Continent
     AND Country.LifeExpectancy = MaxLifeExpectancyByContinent.MaxLifeExpectancy
+JOIN 
+    City
+ON 
+    Country.Capital = City.ID
 ORDER BY LifeExpectancy DESC;
 ```
 ### Query Explanation 
-1. `SELECT Country.Continent, Country.Name, Country.LifeExpectancy`
+1. `SELECT Country.Continent, Country.Name, Country.LifeExpectancy, City.Name AS CapitalCity`
 
-      We are selecting the continent, country name, and life expectancy from the "Country" table.
+      We are selecting the continent, country name, life expectancy, and city from the "Country" and "City" tables.
 
 2. `FROM Country`
 
       We are specifying that we're working with the "Country" table.
 
-3. ```JOIN (...) MaxLifeExpectancyByContinent ON Country.Continent = MaxLifeExpectancyByContinent.Continent AND Country LifeExpectancy = MaxLifeExpectancyByContinent.MaxLifeExpectancy```
+3. ```JOIN (...) MaxLifeExpectancyByContinent ON Country.Continent = MaxLifeExpectancyByContinent.Continent AND Country.LifeExpectancy = MaxLifeExpectancyByContinent.MaxLifeExpectancy```
 
       We're performing a join operation. The subquery in parentheses calculates the maximum life expectancy for each continent. Then, we're joining the main "Country" table with this subquery based on matching continents and life expectancies to get the countries with the highest life expectancy in each continent.
     
@@ -69,20 +74,24 @@ ORDER BY LifeExpectancy DESC;
 
       This specifies the conditions for the join, ensuring that we're matching countries with the highest life expectancy in their respective continents.
 
-6. ```ORDER BY LifeExpectancy DESC;```
+6. ```JOIN City ON Country.Capital = City.ID```
+
+      We're performing another join operation. We are joining the country's capital (which is represented by an ID in the "Country" table) to the ID of the city in the "City" table.
+
+7. ```ORDER BY LifeExpectancy DESC;```
 
       This sorts the final outcome by LifeExpectancy in descending order.
 
 ### Query Results
 The query shows that the countries from each continent with the highest life expectancy are as follows:
 
-| Continent      | Name          | LifeExpectancy |
-|--------------- |-------------- |-------------- |
-| Europe         | Andorra       | 83.5          |
-| Asia           | Macao         | 81.6          |
-| Oceania        | Australia     | 79.8          |
-| North America  | Canada        | 79.4          |
-| Africa         | Saint Helena  | 76.8          |
-| South America  | French Guiana | 76.1          |
+| Continent       | Country         | Life Expectancy | Capital City     |
+| --------------- | ---------------| ---------------| ---------------- |
+| Europe          | Andorra         | 83.5           | Andorra la Vella |
+| Asia            | Macao           | 81.6           | Macao            |
+| Oceania         | Australia       | 79.8           | Canberra         |
+| North America   | Canada          | 79.4           | Ottawa           |
+| Africa          | Saint Helena    | 76.8           | Jamestown        |
+| South America   | French Guiana   | 76.1           | Cayenne          |
 
 ![Alt text](img/results.png)
